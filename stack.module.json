@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "mastodon",
+  "repo": "mastodon-stack-module",
+  "runtimeId": "mastodon",
+  "lifecycle": "active",
+  "dependencies": [
+    "stack-foundation"
+  ],
+  "overlays": [
+    "stack.compose/mastodon.yml",
+    "stack.config/mastodon"
+  ]
+}
