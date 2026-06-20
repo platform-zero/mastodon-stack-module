@@ -300,3 +300,8 @@ services:
 
 volumes:
   mastodon_public_system:
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: ${STACK_VOLUME_ROOT}/mastodon_public_system
