@@ -20,7 +20,9 @@
     "stack.config/mastodon",
     "stack.containers/test-runner/playwright-tests/tests/deep/oidc/mastodon.spec.ts",
     "stack.kotlin/test-runner/src/test/kotlin/org/webservices/testrunner/MastodonAuthHardeningTest.kt",
-    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/CollaborationTests.kt"
+    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/CollaborationTests.kt",
+    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/MastodonCommunicationTests.kt",
+    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/MastodonExtendedCommunicationTests.kt"
   ],
   "testAssets": []
 }
