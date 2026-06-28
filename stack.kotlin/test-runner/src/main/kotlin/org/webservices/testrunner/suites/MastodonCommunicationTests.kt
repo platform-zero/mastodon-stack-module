@@ -20,26 +20,39 @@ test("Mastodon recommendation seeder container is running") {
     test("Mastodon native bootstrap recommendations are configured") {
         val ruby = """
             configured = Setting.bootstrap_timeline_accounts.to_s.split(",").map(&:strip).reject(&:empty?)
-            required = %w[
+            curated = %w[
               wikimediafoundation@wikimedia.social
               internetarchive@mastodon.archive.org
               creativecommons@mastodon.social
               openstreetmap@en.osm.town
               ProPublica@newsie.social
+              edyong209@mastodon.xyz
+              marynmck@mastodon.social
               briankrebs@infosec.exchange
               NASA@mstdn.social
+              sundogplanets@mastodon.social
+              ourworldindata@mas.to
+              AdamMGrant@mastodon.social
+              calnewport@mastodon.social
               b0rk@jvns.ca
+              simon@fedi.simonwillison.net
+              prusaresearch@mastodon.social
+              VoronDesign@fosstodon.org
+              natgeo@mastodon.social
+              philosophybites@mastodon.social
               tomscott@mastodon.social
+              standupmaths@mastodon.social
+              financialtimes@mastodon.social
             ]
 
-            matched = required.select do |handle|
+            matched = curated.select do |handle|
               username, domain = handle.downcase.split("@", 2)
               configured.any? do |configured_handle|
                 configured_username, configured_domain = configured_handle.downcase.gsub(/\A@/, "").split("@", 2)
                 configured_username == username && configured_domain == domain
               end
             end
-            missing = required - matched
+            missing = curated - matched
 
             unresolved = configured.filter_map do |handle|
               username, domain = handle.downcase.gsub(/\A@/, "").split("@", 2)

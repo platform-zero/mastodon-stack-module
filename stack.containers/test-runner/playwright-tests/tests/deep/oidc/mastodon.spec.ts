@@ -30,6 +30,7 @@ import { resolveStackRegex, serviceUrl } from '../../../utils/stack-urls';
 import { logPageTelemetry, setupNetworkLogging } from '../../../utils/telemetry';
 
 test.use({ storageState: authArtifactPath('keycloak-session.json') });
+const moduleScreenshotRoot = path.join(screenshotRoot, 'mastodon');
 
 type MastodonMediaAttachment = {
   type?: string;
@@ -420,8 +421,8 @@ test('Mastodon - federated media images render with real pixels', async ({ page 
     'federated media should be served from the local Mastodon cache/origin, not require arbitrary remote image hosts'
   ).toBeGreaterThan(0);
 
-  const screenshotPath = path.join(screenshotRoot, 'mastodon-federated-media-rendered.jpeg');
-  fs.mkdirSync(screenshotRoot, { recursive: true });
+  const screenshotPath = path.join(moduleScreenshotRoot, 'mastodon-federated-media-rendered.jpeg');
+  fs.mkdirSync(moduleScreenshotRoot, { recursive: true });
   await page.screenshot({
     path: screenshotPath,
     type: 'jpeg',
@@ -623,8 +624,8 @@ test('Mastodon - federated preview card images render with real pixels', async (
     'preview card images should be served from the local Mastodon cache/origin'
   ).toBeGreaterThan(0);
 
-  const screenshotPath = path.join(screenshotRoot, 'mastodon-federated-preview-card-rendered.jpeg');
-  fs.mkdirSync(screenshotRoot, { recursive: true });
+  const screenshotPath = path.join(moduleScreenshotRoot, 'mastodon-federated-preview-card-rendered.jpeg');
+  fs.mkdirSync(moduleScreenshotRoot, { recursive: true });
   await page.screenshot({
     path: screenshotPath,
     type: 'jpeg',
@@ -821,8 +822,8 @@ test('Mastodon - federated profile avatars render with real pixels', async ({ pa
     'federated avatars should be served from the local Mastodon cache/origin'
   ).toBeGreaterThan(0);
 
-  const screenshotPath = path.join(screenshotRoot, 'mastodon-federated-avatar-rendered.jpeg');
-  fs.mkdirSync(screenshotRoot, { recursive: true });
+  const screenshotPath = path.join(moduleScreenshotRoot, 'mastodon-federated-avatar-rendered.jpeg');
+  fs.mkdirSync(moduleScreenshotRoot, { recursive: true });
   await page.screenshot({
     path: screenshotPath,
     type: 'jpeg',
