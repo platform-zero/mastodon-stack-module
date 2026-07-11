@@ -40,6 +40,11 @@ class MastodonAuthHardeningTest {
         assertTrue(mastodonEnv.contains("LIMITED_FEDERATION_MODE=false"))
         assertTrue(mastodonCompose.contains("mastodon_public_system:/opt/mastodon/public/system"))
         assertTrue(mastodonCompose.contains("mastodon_public_system:"))
+        assertTrue(mastodonCompose.contains("configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh"))
+        assertTrue(
+            Regex("""mastodon-web:[\s\S]*configure-bootstrap-recommendations\.sh:/opt/mastodon/bin/configure-bootstrap-recommendations\.sh""")
+                .containsMatchIn(mastodonCompose)
+        )
         assertTrue(
             Regex("""mastodon-recommendation-seeder:[\s\S]*mastodon_public_system:/opt/mastodon/public/system""")
                 .containsMatchIn(mastodonCompose)
