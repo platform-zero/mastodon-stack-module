@@ -17,58 +17,61 @@ test("Mastodon recommendation seeder container is running") {
         println("      ✓ mastodon-recommendation-seeder container running")
     }
 
-    test("Mastodon native bootstrap recommendations are configured") {
+    test("Mastodon native bootstrap recommendations resolve selected packs") {
         val ruby = """
             configured = Setting.bootstrap_timeline_accounts.to_s.split(",").map(&:strip).reject(&:empty?)
-            curated = %w[
-              wikimediafoundation@wikimedia.social
-              internetarchive@mastodon.archive.org
-              creativecommons@mastodon.social
-              openstreetmap@en.osm.town
-              ProPublica@newsie.social
-              edyong209@mastodon.xyz
-              marynmck@mastodon.social
-              briankrebs@infosec.exchange
-              NASA@mstdn.social
-              sundogplanets@mastodon.social
-              ourworldindata@mas.to
-              AdamMGrant@mastodon.social
-              calnewport@mastodon.social
-              b0rk@jvns.ca
-              simon@fedi.simonwillison.net
-              prusaresearch@mastodon.social
-              VoronDesign@fosstodon.org
-              natgeo@mastodon.social
-              philosophybites@mastodon.social
-              tomscott@mastodon.social
-              standupmaths@mastodon.social
-              financialtimes@mastodon.social
-            ]
-
-            matched = curated.select do |handle|
-              username, domain = handle.downcase.split("@", 2)
-              configured.any? do |configured_handle|
-                configured_username, configured_domain = configured_handle.downcase.gsub(/\A@/, "").split("@", 2)
-                configured_username == username && configured_domain == domain
-              end
-            end
-            missing = curated - matched
-
             unresolved = configured.filter_map do |handle|
               username, domain = handle.downcase.gsub(/\A@/, "").split("@", 2)
               account = Account.with_username(username).with_domain(domain).first
               handle if account.nil? || !account.discoverable? || account.suspended? || account.silenced? || account.moved?
             end
 
-            payload = { configured: configured, matched: matched, missing: missing, unresolved: unresolved }
+            payload = { configured: configured, unresolved: unresolved }
             puts payload.to_json
-            exit(configured.length >= 8 && matched.length >= 8 && unresolved.empty? ? 0 : 42)
+            exit(unresolved.empty? ? 0 : 42)
         """.trimIndent()
 
         val result = DockerCli.run("exec", composeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
         require(result.exitCode == 0) {
             "Mastodon native bootstrap recommendations are not configured correctly: ${result.output}"
         }
-        println("      ✓ Mastodon native bootstrap recommendations configured: ${result.output}")
+        println("      ✓ Mastodon native bootstrap recommendations resolved selected packs: ${result.output}")
+    }
+
+    test("Mastodon follow seeding creates bootstrap follows for local users") {
+        val ruby = """
+            configured = Setting.bootstrap_timeline_accounts.to_s.split(",").map(&:strip).reject(&:empty?)
+            sysadmin = Account.find_by(username: "sysadmin", domain: nil)
+            raise "missing sysadmin account" if sysadmin.nil?
+
+            following = sysadmin.following.map(&:acct)
+            requested = sysadmin.follow_requests.map { |follow_request| follow_request.target_account.acct }
+            seeded = (following + requested).uniq
+
+            matched = configured.select do |handle|
+              username, domain = handle.downcase.gsub(/\A@/, "").split("@", 2)
+              seeded.any? do |seeded_handle|
+                seeded_username, seeded_domain = seeded_handle.downcase.gsub(/\A@/, "").split("@", 2)
+                seeded_username == username && seeded_domain == domain
+              end
+            end
+
+            payload = {
+              configured_count: configured.length,
+              following_count: following.length,
+              requested_count: requested.length,
+              matched: matched,
+              sample_following: following.first(10),
+              sample_requested: requested.first(10),
+            }
+            puts payload.to_json
+            exit(configured.empty? || matched.length == configured.length ? 0 : 42)
+        """.trimIndent()
+
+        val result = DockerCli.run("exec", composeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
+        require(result.exitCode == 0) {
+            "Mastodon follow seeding did not create the expected bootstrap follows: ${result.output}"
+        }
+        println("      ✓ Mastodon follow seeding created selected bootstrap follows: ${result.output}")
     }
 }

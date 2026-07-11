@@ -68,6 +68,7 @@ services:
     volumes:
       - ./configs/mastodon/bootstrap-api-user.sh:/opt/mastodon/bin/bootstrap-api-user.sh:ro
       - ./configs/mastodon/configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh:ro
+      - ./configs/mastodon/bootstrap-follows.d:/opt/mastodon/config/bootstrap-follows.d:ro
 
 
   mastodon-web:
@@ -131,6 +132,8 @@ services:
       - mastodon_public_system:/opt/mastodon/public/system
       - ./configs/mastodon/zz_webservices_session_store.rb:/opt/mastodon/config/initializers/zz_webservices_session_store.rb:ro
       - ./configs/mastodon/zz_webservices_oidc_state.rb:/opt/mastodon/config/initializers/zz_webservices_oidc_state.rb:ro
+      - ./configs/mastodon/configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh:ro
+      - ./configs/mastodon/bootstrap-follows.d:/opt/mastodon/config/bootstrap-follows.d:ro
     command:
       - bash
       - -c
@@ -288,6 +291,7 @@ services:
       - caddy_ca:/ca:ro
       - mastodon_public_system:/opt/mastodon/public/system
       - ./configs/mastodon/configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh:ro
+      - ./configs/mastodon/bootstrap-follows.d:/opt/mastodon/config/bootstrap-follows.d:ro
     depends_on:
       caddy:
         condition: service_healthy
@@ -315,7 +319,7 @@ services:
         fi
         while true; do
           bash /opt/mastodon/bin/configure-bootstrap-recommendations.sh || true
-          sleep ${MASTODON_RECOMMENDATION_SEED_INTERVAL_SECONDS:-300}
+          sleep ${MASTODON_RECOMMENDATION_SEED_INTERVAL_SECONDS:-60}
         done
 
 volumes:
