@@ -22,7 +22,8 @@
     "stack.kotlin/test-runner/src/test/kotlin/org/webservices/testrunner/MastodonAuthHardeningTest.kt",
     "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/CollaborationTests.kt",
     "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/MastodonCommunicationTests.kt",
-    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/MastodonExtendedCommunicationTests.kt"
+    "stack.kotlin/test-runner/src/main/kotlin/org/webservices/testrunner/suites/MastodonExtendedCommunicationTests.kt",
+    "stack.runtime.yaml"
   ],
   "testAssets": []
 }

@@ -36,7 +36,7 @@ services:
       MASTODON_API_USERNAME: ${STACK_ADMIN_USER}
       MASTODON_API_EMAIL: ${STACK_ADMIN_EMAIL}
       MASTODON_API_PASSWORD: ${STACK_ADMIN_PASSWORD}
-      MASTODON_API_TOKEN: ${STACK_ADMIN_PASSWORD}
+      MASTODON_API_TOKEN: ${MASTODON_API_TOKEN}
       SECRET_KEY_BASE: ${MASTODON_SECRET_KEY_BASE}
       OTP_SECRET: ${MASTODON_OTP_SECRET}
       ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ${MASTODON_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}
@@ -100,6 +100,7 @@ services:
       DB_PORT: 5432
       DB_NAME: mastodon
       DB_USER: mastodon
+      DB_PASS: ${POSTGRES_MASTODON_PASSWORD}
       REDIS_HOST: valkey
       REDIS_PORT: 6379
       REDIS_USER: mastodon
@@ -121,7 +122,7 @@ services:
       RAILS_MAX_THREADS: 5
       DB_POOL: 10  # Should be >= MAX_THREADS for connection pooling
       # Trust all Docker bridge networks for X-Forwarded-* headers
-      TRUSTED_PROXY_IP: 172.16.0.0/12,192.168.0.0/16  # Docker networks + internal network
+      TRUSTED_PROXY_IP: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  # Podman/Docker networks + internal network
       # Allow internal container hostnames for health checks and test runner
       RAILS_DEVELOPMENT_HOSTS: "mastodon-web,mastodon-web:3000,localhost,localhost:3000,127.0.0.1,127.0.0.1:3000,mastodon.${DOMAIN},.${DOMAIN},mastodon-sidekiq"
       # Additional Rails host authorization overrides
@@ -176,6 +177,7 @@ services:
       DB_PORT: 5432
       DB_NAME: mastodon
       DB_USER: mastodon
+      DB_PASS: ${POSTGRES_MASTODON_PASSWORD}
       REDIS_HOST: valkey
       REDIS_PORT: 6379
       REDIS_USER: mastodon
@@ -215,6 +217,7 @@ services:
       DB_PORT: 5432
       DB_NAME: mastodon
       DB_USER: mastodon
+      DB_PASS: ${POSTGRES_MASTODON_PASSWORD}
       REDIS_HOST: valkey
       REDIS_PORT: 6379
       REDIS_USER: mastodon
@@ -277,6 +280,7 @@ services:
       DB_PORT: 5432
       DB_NAME: mastodon
       DB_USER: mastodon
+      DB_PASS: ${POSTGRES_MASTODON_PASSWORD}
       REDIS_HOST: valkey
       REDIS_PORT: 6379
       REDIS_USER: mastodon
