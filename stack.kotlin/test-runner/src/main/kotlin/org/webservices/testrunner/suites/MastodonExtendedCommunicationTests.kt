@@ -121,7 +121,7 @@ test("Mastodon: Web interface is accessible") {
             exit(missing.empty? ? 0 : 42)
         """.trimIndent()
 
-        val result = DockerCli.run("exec", composeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
+        val result = ContainerCli.run("exec", runtimeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
         require(result.exitCode == 0) {
             "Mastodon has attachment records with missing cached files: ${result.output}"
         }

@@ -4,8 +4,8 @@ import org.webservices.testrunner.framework.*
 
 suspend fun TestRunner.mastodonCommunicationTests() = suite("Mastodon Communication Tests") {
 test("Mastodon recommendation seeder container is running") {
-        val containerName = composeServiceContainerName("mastodon-recommendation-seeder")
-        val result = DockerCli.run(
+        val containerName = runtimeServiceContainerName("mastodon-recommendation-seeder")
+        val result = ContainerCli.run(
             "inspect", "-f", "{{.State.Status}}", containerName
         )
         require(result.exitCode == 0) {
@@ -31,7 +31,7 @@ test("Mastodon recommendation seeder container is running") {
             exit(unresolved.empty? ? 0 : 42)
         """.trimIndent()
 
-        val result = DockerCli.run("exec", composeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
+        val result = ContainerCli.run("exec", runtimeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
         require(result.exitCode == 0) {
             "Mastodon native bootstrap recommendations are not configured correctly: ${result.output}"
         }
@@ -68,7 +68,7 @@ test("Mastodon recommendation seeder container is running") {
             exit(configured.empty? || matched.length == configured.length ? 0 : 42)
         """.trimIndent()
 
-        val result = DockerCli.run("exec", composeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
+        val result = ContainerCli.run("exec", runtimeServiceContainerName("mastodon-web"), "bin/rails", "runner", ruby)
         require(result.exitCode == 0) {
             "Mastodon follow seeding did not create the expected bootstrap follows: ${result.output}"
         }
