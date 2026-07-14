@@ -11,7 +11,7 @@ class MastodonAuthHardeningTest {
     @Test
     fun `mastodon oidc state and nonce protections remain enabled and host filtering is not globally disabled`() {
         val mastodonEnv = repoFileText("stack.config/mastodon/mastodon.env")
-        val mastodonCompose = repoFileText("stack.compose/mastodon.yml")
+        val mastodonCompose = repoFileText("stack.runtime.yaml")
         val oidcInitializer = repoFileText("stack.config/mastodon/zz_webservices_oidc_state.rb")
 
         assertTrue(mastodonEnv.contains("OIDC_REQUIRE_STATE=true"))
@@ -34,7 +34,7 @@ class MastodonAuthHardeningTest {
     @Test
     fun `mastodon persists federated media cache across web and sidekiq`() {
         val mastodonEnv = repoFileText("stack.config/mastodon/mastodon.env")
-        val mastodonCompose = repoFileText("stack.compose/mastodon.yml")
+        val mastodonCompose = repoFileText("stack.runtime.yaml")
 
         assertTrue(mastodonEnv.contains("AUTHORIZED_FETCH=false"))
         assertTrue(mastodonEnv.contains("LIMITED_FEDERATION_MODE=false"))
