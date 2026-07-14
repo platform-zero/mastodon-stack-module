@@ -6,7 +6,7 @@
 - Lifecycle: `active`
 
 ## Owned overlays
-- `stack.compose/mastodon.yml`
+- `stack.runtime.yaml`
 - `stack.config/mastodon`
 
 ## Dependencies

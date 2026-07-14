@@ -16,7 +16,6 @@
   "smoke": "external-only",
   "smokeUnsupportedReason": "requires generated bundle context, deployed networking, secrets, or service dependencies",
   "overlays": [
-    "stack.compose/mastodon.yml",
     "stack.config/mastodon",
     "stack.containers/test-runner/playwright-tests/tests/deep/oidc/mastodon.spec.ts",
     "stack.kotlin/test-runner/src/test/kotlin/org/webservices/testrunner/MastodonAuthHardeningTest.kt",
