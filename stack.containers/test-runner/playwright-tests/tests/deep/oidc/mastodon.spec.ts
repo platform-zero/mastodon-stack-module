@@ -85,7 +85,7 @@ PreviewCardsStatus.find_or_create_by!(preview_card: card, status: status, url: u
 puts JSON.generate(id: status.id.to_s, acct: account.acct, image: card.image.url)
 `;
 
-  const output = execFileSync('docker', [
+  const output = execFileSync(process.env.TEST_RUNNER_CONTAINER_CLI || 'podman', [
     'exec',
     '-i',
     'mastodon-web',
@@ -129,7 +129,7 @@ status = PostStatusService.new.call(
 puts JSON.generate(id: status.id.to_s, acct: account.acct, file: attachment.file.url)
 `;
 
-  const output = execFileSync('docker', [
+  const output = execFileSync(process.env.TEST_RUNNER_CONTAINER_CLI || 'podman', [
     'exec',
     '-i',
     'mastodon-web',

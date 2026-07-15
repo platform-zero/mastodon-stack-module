@@ -11,7 +11,7 @@ class MastodonAuthHardeningTest {
     @Test
     fun `mastodon oidc state and nonce protections remain enabled and host filtering is not globally disabled`() {
         val mastodonEnv = repoFileText("stack.config/mastodon/mastodon.env")
-        val mastodonCompose = repoFileText("stack.runtime.yaml")
+        val mastodonRuntime = repoFileText("stack.runtime.yaml")
         val oidcInitializer = repoFileText("stack.config/mastodon/zz_webservices_oidc_state.rb")
 
         assertTrue(mastodonEnv.contains("OIDC_REQUIRE_STATE=true"))
@@ -19,9 +19,9 @@ class MastodonAuthHardeningTest {
         assertFalse(mastodonEnv.contains("OIDC_REQUIRE_STATE=false"))
         assertFalse(mastodonEnv.contains("OIDC_SEND_NONCE=false"))
 
-        assertFalse(mastodonCompose.contains("DISABLE_HOST_CHECK: \"true\""))
-        assertFalse(mastodonCompose.contains("DANGEROUSLY_DISABLE_HOST_FILTERING: \"true\""))
-        assertFalse(mastodonCompose.contains("ACTION_DISPATCH_HOSTS_PERMIT_ALL: \"true\""))
+        assertFalse(mastodonRuntime.contains("DISABLE_HOST_CHECK: \"true\""))
+        assertFalse(mastodonRuntime.contains("DANGEROUSLY_DISABLE_HOST_FILTERING: \"true\""))
+        assertFalse(mastodonRuntime.contains("ACTION_DISPATCH_HOSTS_PERMIT_ALL: \"true\""))
 
         assertTrue(oidcInitializer.contains("oidc_config.options[:require_state] = true"))
         assertTrue(oidcInitializer.contains("oidc_config.options[:send_state] = true"))
@@ -34,13 +34,13 @@ class MastodonAuthHardeningTest {
     @Test
     fun `mastodon persists federated media cache across web and sidekiq`() {
         val mastodonEnv = repoFileText("stack.config/mastodon/mastodon.env")
-        val mastodonCompose = repoFileText("stack.runtime.yaml")
+        val mastodonRuntime = repoFileText("stack.runtime.yaml")
 
         assertTrue(mastodonEnv.contains("AUTHORIZED_FETCH=false"))
         assertTrue(mastodonEnv.contains("LIMITED_FEDERATION_MODE=false"))
-        assertTrue(mastodonCompose.contains("mastodon_public_system:/opt/mastodon/public/system"))
-        assertTrue(mastodonCompose.contains("mastodon_public_system:"))
-        assertTrue(mastodonCompose.contains("configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh"))
+        assertTrue(mastodonRuntime.contains("mastodon_public_system:/opt/mastodon/public/system"))
+        assertTrue(mastodonRuntime.contains("mastodon_public_system:"))
+        assertTrue(mastodonRuntime.contains("configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh"))
         assertTrue(
             Regex("""mastodon-web:[\s\S]*configure-bootstrap-recommendations\.sh:/opt/mastodon/bin/configure-bootstrap-recommendations\.sh""")
                 .containsMatchIn(mastodonCompose)
