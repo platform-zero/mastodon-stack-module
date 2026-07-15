@@ -19,6 +19,17 @@ class MastodonAuthHardeningTest {
         assertFalse(mastodonEnv.contains("OIDC_REQUIRE_STATE=false"))
         assertFalse(mastodonEnv.contains("OIDC_SEND_NONCE=false"))
 
+        assertTrue(
+            Regex("""mastodon-web:[\s\S]*OIDC_ENABLED:\s*"true"[\s\S]*OIDC_CLIENT_SECRET:\s*"\$\{MASTODON_OAUTH_SECRET\}"[\s\S]*OMNIAUTH_ONLY:\s*"true"""")
+                .containsMatchIn(mastodonRuntime),
+            "mastodon-web must receive native OIDC env vars from stack.runtime.yaml"
+        )
+        assertTrue(
+            Regex("""mastodon-sidekiq:[\s\S]*OIDC_ENABLED:\s*"true"[\s\S]*OIDC_CLIENT_SECRET:\s*"\$\{MASTODON_OAUTH_SECRET\}"[\s\S]*OMNIAUTH_ONLY:\s*"true"""")
+                .containsMatchIn(mastodonRuntime),
+            "mastodon-sidekiq must receive native OIDC env vars from stack.runtime.yaml"
+        )
+
         assertFalse(mastodonRuntime.contains("DISABLE_HOST_CHECK: \"true\""))
         assertFalse(mastodonRuntime.contains("DANGEROUSLY_DISABLE_HOST_FILTERING: \"true\""))
         assertFalse(mastodonRuntime.contains("ACTION_DISPATCH_HOSTS_PERMIT_ALL: \"true\""))
@@ -43,11 +54,11 @@ class MastodonAuthHardeningTest {
         assertTrue(mastodonRuntime.contains("configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh"))
         assertTrue(
             Regex("""mastodon-web:[\s\S]*configure-bootstrap-recommendations\.sh:/opt/mastodon/bin/configure-bootstrap-recommendations\.sh""")
-                .containsMatchIn(mastodonCompose)
+                .containsMatchIn(mastodonRuntime)
         )
         assertTrue(
             Regex("""mastodon-recommendation-seeder:[\s\S]*mastodon_public_system:/opt/mastodon/public/system""")
-                .containsMatchIn(mastodonCompose)
+                .containsMatchIn(mastodonRuntime)
         )
         assertFalse(mastodonEnv.contains("EXTRA_MEDIA_HOSTS=*"))
     }
