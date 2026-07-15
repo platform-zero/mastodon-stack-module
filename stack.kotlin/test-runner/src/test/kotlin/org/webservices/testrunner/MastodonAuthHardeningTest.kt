@@ -13,6 +13,7 @@ class MastodonAuthHardeningTest {
         val mastodonEnv = repoFileText("stack.config/mastodon/mastodon.env")
         val mastodonRuntime = repoFileText("stack.runtime.yaml")
         val oidcInitializer = repoFileText("stack.config/mastodon/zz_webservices_oidc_state.rb")
+        val sessionInitializer = repoFileText("stack.config/mastodon/zz_webservices_session_store.rb")
 
         assertTrue(mastodonEnv.contains("OIDC_REQUIRE_STATE=true"))
         assertTrue(mastodonEnv.contains("OIDC_SEND_NONCE=true"))
@@ -40,6 +41,11 @@ class MastodonAuthHardeningTest {
         assertFalse(oidcInitializer.contains("def valid_state?"))
         assertFalse(oidcInitializer.contains("options.send_state = false"))
         assertFalse(oidcInitializer.contains("options.require_state = false"))
+
+        assertTrue(mastodonEnv.contains("SESSION_COOKIE_SAMESITE=lax"))
+        assertTrue(sessionInitializer.contains("ENV.fetch('SESSION_COOKIE_SAMESITE', 'lax')"))
+        assertTrue(sessionInitializer.contains("same_site: same_site"))
+        assertFalse(sessionInitializer.contains("same_site: :none"))
     }
 
     @Test

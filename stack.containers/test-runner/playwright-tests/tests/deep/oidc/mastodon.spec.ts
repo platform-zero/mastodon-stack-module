@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { devices, test, expect } from '@playwright/test';
 import type { Locator, Page, Response } from '@playwright/test';
 import { execFileSync } from 'child_process';
 import * as fs from 'fs';
@@ -6,6 +6,7 @@ import * as path from 'path';
 import { KeycloakLoginPage } from '../../../pages/KeycloakLoginPage';
 import { OIDCLoginPage } from '../../../pages/OIDCLoginPage';
 import { authArtifactPath } from '../../../utils/auth-artifacts';
+import { withManagedBrowserUser } from '../../../utils/managed-browser-user';
 import {
   assertBookStackDisplayName,
   assertElementDisplayName,
@@ -255,6 +256,104 @@ test('Mastodon - OIDC login flow', async ({ page }) => {
       await runMastodonLogin();
     }
   });
+
+test.describe('Mastodon mobile unauthenticated SSO', () => {
+  test.use({ storageState: undefined });
+
+  test('Mastodon - mobile SSO keeps session cookies and recovers repeat login taps', async ({ browser, request }) => {
+    test.setTimeout(180000);
+
+    const signInResponse = await request.get(serviceUrl('mastodon', '/auth/sign_in'));
+    expect(signInResponse.status()).toBe(200);
+    const setCookie = signInResponse.headers()['set-cookie'] || '';
+    expect(setCookie).toMatch(/_mastodon_session=/i);
+    expect(setCookie).toMatch(/;\s*secure\b/i);
+    expect(setCookie).toMatch(/;\s*samesite=lax\b/i);
+    expect(setCookie.toLowerCase()).toContain(`domain=.${domain.toLowerCase()}`);
+
+    await withManagedBrowserUser('mo', async (mobileUser) => {
+      const context = await browser.newContext({
+        ...devices['iPhone 13'],
+        ignoreHTTPSErrors: process.env.PLAYWRIGHT_IGNORE_HTTPS_ERRORS === 'true',
+      });
+      const page = await context.newPage();
+
+      try {
+        await page.goto(serviceUrl('mastodon', '/auth/sign_in'), {
+          waitUntil: 'networkidle',
+          timeout: 45000,
+        });
+
+        const keycloakButton = page.locator('a.button-openid_connect')
+          .or(page.getByRole('button', { name: /keycloak|sso|openid/i }))
+          .or(page.getByRole('link', { name: /keycloak|sso|openid/i }))
+          .first();
+        await expect(keycloakButton).toBeVisible({ timeout: 15000 });
+        await keycloakButton.tap({ timeout: 10000 });
+        await page.waitForURL(/keycloak\./, { timeout: 30000 });
+
+        await new KeycloakLoginPage(page).login(mobileUser.username, mobileUser.password);
+        await page.waitForLoadState('domcontentloaded', { timeout: 30000 }).catch(() => {});
+        await page.waitForTimeout(5000);
+
+        await expect
+          .poll(() => resolveStackRegex(/^https:\/\/mastodon\.webservices\.net(?:\/|$)/i).test(page.url()), {
+            timeout: 30000,
+            message: 'Mobile Mastodon SSO should return to the Mastodon host.',
+          })
+          .toBe(true);
+
+        await expect
+          .poll(async () => {
+            const body = (await page.textContent('body').catch(() => '')) || '';
+            return /Profile setup|Save and continue|New Post|Home|Notifications|Preferences/i.test(body)
+              && !/Sign in to Mastodon|Log in/i.test(body);
+          }, {
+            timeout: 30000,
+            message: 'Mobile Mastodon SSO should render authenticated UI.',
+          })
+          .toBe(true);
+
+        const mastodonCookies = await context.cookies(serviceUrl('mastodon'));
+        const sessionCookie = mastodonCookies.find((cookie) => cookie.name === '_mastodon_session');
+        expect(sessionCookie).toMatchObject({
+          domain: `.${domain}`,
+          sameSite: 'Lax',
+          secure: true,
+        });
+
+        await page.goto(serviceUrl('mastodon', '/auth/sign_in'), {
+          waitUntil: 'domcontentloaded',
+          timeout: 30000,
+        });
+        await page.waitForTimeout(1000);
+
+        const repeatButton = page.locator('a.button-openid_connect')
+          .or(page.getByRole('button', { name: /keycloak|sso|openid/i }))
+          .or(page.getByRole('link', { name: /keycloak|sso|openid/i }))
+          .first();
+        if (await repeatButton.isVisible().catch(() => false)) {
+          const beforeClick = page.url();
+          await repeatButton.tap({ timeout: 10000 });
+          await page.waitForTimeout(2500);
+          expect(page.url(), 'Repeat mobile Keycloak tap should navigate instead of staying inert').not.toBe(beforeClick);
+        } else {
+          await expect
+            .poll(async () => {
+              const body = (await page.textContent('body').catch(() => '')) || '';
+              return /New Post|Home|Notifications|Preferences|Profile setup/i.test(body);
+            }, {
+              timeout: 15000,
+              message: 'Authenticated mobile revisit should show Mastodon UI when no login button is present.',
+            })
+            .toBe(true);
+        }
+      } finally {
+        await context.close();
+      }
+    });
+  });
+});
 
 test('Mastodon - federated media images render with real pixels', async ({ page }) => {
   test.setTimeout(180000);
