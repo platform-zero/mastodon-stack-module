@@ -55,8 +55,8 @@ suspend fun TestRunner.mastodonCommunicationTests() = suite("Mastodon Communicat
             where local.username = 'sysadmin' and local.domain is null
             """.trimIndent()
         )
-        require(sysadminFollows >= 0) {
-            "Mastodon follow relationship query returned an invalid count"
+        require(sysadminFollows > 0) {
+            "Mastodon bootstrap did not seed any follows for the sysadmin account"
         }
         println("      ✓ Mastodon follow relationship table is queryable for sysadmin ($sysadminFollows follows)")
     }

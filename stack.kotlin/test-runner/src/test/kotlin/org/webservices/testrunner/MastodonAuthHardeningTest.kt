@@ -70,6 +70,21 @@ class MastodonAuthHardeningTest {
     }
 
     @Test
+    fun `mastodon web and sidekiq authenticate to the provisioned smtp account`() {
+        val mastodonRuntime = repoFileText("stack.runtime.yaml")
+
+        listOf("mastodon-web", "mastodon-sidekiq").forEach { service ->
+            val serviceBlock = runtimeServiceBlock(mastodonRuntime, service)
+            assertTrue(serviceBlock.contains("SMTP_SERVER: \"mail.\${DOMAIN}\""))
+            assertTrue(serviceBlock.contains("SMTP_LOGIN: \"mastodon@\${MAIL_DOMAIN}\""))
+            assertTrue(serviceBlock.contains("SMTP_PASSWORD: \"\${MASTODON_SMTP_PASSWORD}\""))
+            assertTrue(serviceBlock.contains("SMTP_OPENSSL_VERIFY_MODE: \"peer\""))
+            assertTrue(serviceBlock.contains("- \"mail.\${DOMAIN}:host-gateway\""))
+            assertFalse(serviceBlock.contains("SMTP_OPENSSL_VERIFY_MODE: \"none\""))
+        }
+    }
+
+    @Test
     fun `mastodon recommendation bootstrap clears missing cache-backed attachment metadata`() {
         val bootstrap = repoFileText("stack.config/mastodon/configure-bootstrap-recommendations.sh")
 
@@ -81,7 +96,19 @@ class MastodonAuthHardeningTest {
     }
 
     private fun repoFileText(relativePath: String): String =
-        Files.readString(repoRoot().resolve(relativePath))
+        TestSourceFiles.moduleText("mastodon", relativePath)
+
+    private fun runtimeServiceBlock(runtime: String, service: String): String {
+        val header = "  $service:"
+        val start = runtime.indexOf(header)
+        require(start >= 0) { "Missing runtime service: $service" }
+        val nextService = Regex("(?m)^  [A-Za-z0-9_-]+:")
+            .find(runtime, start + header.length)
+            ?.range
+            ?.first
+            ?: runtime.length
+        return runtime.substring(start, nextService)
+    }
 
     private fun repoRoot(): Path {
         var current = Path.of("").toAbsolutePath()
