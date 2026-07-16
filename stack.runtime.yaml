@@ -82,11 +82,14 @@ services:
       REDIS_PORT: 6379
       REDIS_USER: "mastodon"
       REDIS_PASSWORD: "${VALKEY_MASTODON_PASSWORD}"
-      SMTP_SERVER: "mailserver"
+      SMTP_SERVER: "mail.${DOMAIN}"
       SMTP_PORT: 587
+      SMTP_LOGIN: "mastodon@${MAIL_DOMAIN}"
+      SMTP_PASSWORD: "${MASTODON_SMTP_PASSWORD}"
       SMTP_FROM_ADDRESS: "mastodon@${DOMAIN}"
       SMTP_AUTH_METHOD: "plain"
-      SMTP_OPENSSL_VERIFY_MODE: "none"
+      SMTP_OPENSSL_VERIFY_MODE: "peer"
+      SMTP_ENABLE_STARTTLS: "auto"
       STREAMING_API_BASE_URL: "wss://mastodon.${DOMAIN}"
       SECRET_KEY_BASE: "${MASTODON_SECRET_KEY_BASE}"
       OTP_SECRET: "${MASTODON_OTP_SECRET}"
@@ -121,6 +124,8 @@ services:
       OIDC_ACCOUNT_DISPLAY_NAME_FIELD: "name"
       SKIP_POST_DEPLOYMENT_MIGRATIONS: "false"
       SSL_CERT_FILE: "/ca/caddy-ca.crt"
+    extraHosts:
+    - "mail.${DOMAIN}:host-gateway"
     networks:
     - "caddy"
     - "postgres"
@@ -212,11 +217,14 @@ services:
       REDIS_PORT: 6379
       REDIS_USER: "mastodon"
       REDIS_PASSWORD: "${VALKEY_MASTODON_PASSWORD}"
-      SMTP_SERVER: "mailserver"
+      SMTP_SERVER: "mail.${DOMAIN}"
       SMTP_PORT: 587
+      SMTP_LOGIN: "mastodon@${MAIL_DOMAIN}"
+      SMTP_PASSWORD: "${MASTODON_SMTP_PASSWORD}"
       SMTP_FROM_ADDRESS: "mastodon@${DOMAIN}"
       SMTP_AUTH_METHOD: "plain"
-      SMTP_OPENSSL_VERIFY_MODE: "none"
+      SMTP_OPENSSL_VERIFY_MODE: "peer"
+      SMTP_ENABLE_STARTTLS: "auto"
       SECRET_KEY_BASE: "${MASTODON_SECRET_KEY_BASE}"
       OTP_SECRET: "${MASTODON_OTP_SECRET}"
       ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "${MASTODON_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}"
@@ -243,6 +251,8 @@ services:
       OIDC_ACCOUNT_USERNAME_FIELD: "preferred_username"
       OIDC_ACCOUNT_DISPLAY_NAME_FIELD: "name"
       SSL_CERT_FILE: "/ca/caddy-ca.crt"
+    extraHosts:
+    - "mail.${DOMAIN}:host-gateway"
     networks:
     - "postgres"
     - "valkey"

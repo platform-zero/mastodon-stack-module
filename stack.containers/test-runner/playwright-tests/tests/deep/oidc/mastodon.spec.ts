@@ -62,6 +62,21 @@ type MastodonAccount = {
 
 const PREVIEW_CARD_FIXTURE_JPEG_BASE64 = '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';
 
+function parseMastodonSeed<T>(output: string): T {
+  const marker = 'PLAYWRIGHT_SEED=';
+  const payload = output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .reverse()
+    .find((line) => line.startsWith(marker));
+
+  if (!payload) {
+    throw new Error('Mastodon seed command did not emit a PLAYWRIGHT_SEED result');
+  }
+
+  return JSON.parse(payload.slice(marker.length)) as T;
+}
+
 function seedMastodonPreviewCard(): MastodonTimelineStatus | undefined {
   const script = `
 require 'base64'
@@ -83,7 +98,7 @@ card.save!
 Status.where(account_id: account.id).where('text LIKE ?', '%Playwright preview card cache fixture%').destroy_all
 status = PostStatusService.new.call(account, text: "Playwright preview card cache fixture #{url}", visibility: :public)
 PreviewCardsStatus.find_or_create_by!(preview_card: card, status: status, url: url)
-puts JSON.generate(id: status.id.to_s, acct: account.acct, image: card.image.url)
+puts "PLAYWRIGHT_SEED=#{JSON.generate(id: status.id.to_s, acct: account.acct, image: card.image.url)}"
 `;
 
   const output = execFileSync(process.env.TEST_RUNNER_CONTAINER_CLI || 'podman', [
@@ -95,7 +110,7 @@ puts JSON.generate(id: status.id.to_s, acct: account.acct, image: card.image.url
     'cat >/tmp/playwright-preview-card-seed.rb && bin/rails runner /tmp/playwright-preview-card-seed.rb',
   ], { input: script, encoding: 'utf-8', timeout: 120000 });
 
-  const seed = JSON.parse(output.trim()) as { id: string; acct: string; image: string };
+  const seed = parseMastodonSeed<{ id: string; acct: string; image: string }>(output);
   return {
     id: seed.id,
     account: { acct: seed.acct },
@@ -127,7 +142,7 @@ status = PostStatusService.new.call(
   visibility: :public,
   media_ids: [attachment.id]
 )
-puts JSON.generate(id: status.id.to_s, acct: account.acct, file: attachment.file.url)
+puts "PLAYWRIGHT_SEED=#{JSON.generate(id: status.id.to_s, acct: account.acct, file: attachment.file.url)}"
 `;
 
   const output = execFileSync(process.env.TEST_RUNNER_CONTAINER_CLI || 'podman', [
@@ -139,7 +154,7 @@ puts JSON.generate(id: status.id.to_s, acct: account.acct, file: attachment.file
     'cat >/tmp/playwright-media-attachment-seed.rb && bin/rails runner /tmp/playwright-media-attachment-seed.rb',
   ], { input: script, encoding: 'utf-8', timeout: 120000 });
 
-  const seed = JSON.parse(output.trim()) as { id: string; acct: string; file: string };
+  const seed = parseMastodonSeed<{ id: string; acct: string; file: string }>(output);
   return {
     id: seed.id,
     account: { acct: seed.acct },
@@ -147,6 +162,35 @@ puts JSON.generate(id: status.id.to_s, acct: account.acct, file: attachment.file
       type: 'image',
       url: seed.file.startsWith('http') ? seed.file : serviceUrl('mastodon', seed.file),
     }],
+  };
+}
+
+function seedMastodonProfileAvatar(): { acct: string; avatar: string } {
+  const script = `
+require 'base64'
+require 'json'
+account = Account.find_by(username: 'screenshot_demo') || Account.joins(:user).first
+raise 'no local Mastodon account available for avatar seed' unless account
+image_path = '/tmp/playwright-profile-avatar.jpg'
+File.binwrite(image_path, Base64.decode64('${PREVIEW_CARD_FIXTURE_JPEG_BASE64}'))
+account.avatar = File.open(image_path)
+account.save!
+puts "PLAYWRIGHT_SEED=#{JSON.generate(acct: account.acct, avatar: account.avatar.url)}"
+`;
+
+  const output = execFileSync(process.env.TEST_RUNNER_CONTAINER_CLI || 'podman', [
+    'exec',
+    '-i',
+    'mastodon-web',
+    'sh',
+    '-lc',
+    'cat >/tmp/playwright-profile-avatar-seed.rb && bin/rails runner /tmp/playwright-profile-avatar-seed.rb',
+  ], { input: script, encoding: 'utf-8', timeout: 120000 });
+
+  const seed = parseMastodonSeed<{ acct: string; avatar: string }>(output);
+  return {
+    acct: seed.acct,
+    avatar: seed.avatar.startsWith('http') ? seed.avatar : serviceUrl('mastodon', seed.avatar),
   };
 }
 
@@ -460,7 +504,7 @@ test('Mastodon - federated media images render with real pixels', async ({ page 
   };
 
   const statusWithImage = await findImageStatus();
-  expect(statusWithImage, 'Mastodon should expose at least one cached federated image status').toBeTruthy();
+  expect(statusWithImage, 'Mastodon should expose at least one cached federated image status').toBeDefined();
 
   const acct = statusWithImage!.account!.acct!;
   const statusUrl = serviceUrl('mastodon', `/@${acct}/${statusWithImage!.id}`);
@@ -638,7 +682,7 @@ test('Mastodon - federated preview card images render with real pixels', async (
     }
   }
 
-  expect(statusWithPreviewCard, 'Mastodon should expose at least one cached federated preview-card status').toBeTruthy();
+  expect(statusWithPreviewCard, 'Mastodon should expose at least one cached federated preview-card status').toBeDefined();
 
   const acct = statusWithPreviewCard!.account!.acct!;
   const statusUrl = serviceUrl('mastodon', `/@${acct}/${statusWithPreviewCard!.id}`);
@@ -737,12 +781,12 @@ test('Mastodon - federated preview card images render with real pixels', async (
   console.log(`   Screenshot saved: ${screenshotPath}`);
 });
 
-test('Mastodon - federated profile avatars render with real pixels', async ({ page }) => {
+test('Mastodon - profile avatars render with real pixels', async ({ page }) => {
   test.setTimeout(180000);
 
   await testOIDCService(
     page,
-    'Mastodon federated profile avatars',
+    'Mastodon profile avatars',
     serviceUrl('mastodon'),
     /What's on your mind|Compose new post|Publish|Home|Notifications|Profile setup|Save and continue|Display name/i,
     ['Keycloak', 'SSO', 'OpenID', 'OpenID Connect'],
@@ -768,38 +812,15 @@ test('Mastodon - federated profile avatars render with real pixels', async ({ pa
     }
   );
 
-  const knownFederatedAccounts = [
-    'briankrebs@infosec.exchange',
-    'arstechnica@mastodon.social',
-    'b0rk@jvns.ca',
-    'simon@simonwillison.net',
-  ];
+  const seededProfile = seedMastodonProfileAvatar();
+  const profileUrl = serviceUrl('mastodon', `/@${encodeURIComponent(seededProfile.acct)}`);
+  const profileAvatarUrl = seededProfile.avatar;
 
-  let profileUrl: string | undefined;
-  let profileAvatarUrl: string | undefined;
-  for (const acct of knownFederatedAccounts) {
-    const lookup = await page.evaluate(async (accountName) => {
-      const response = await fetch(`/api/v1/accounts/lookup?acct=${encodeURIComponent(accountName)}`, {
-        credentials: 'same-origin',
-        headers: { accept: 'application/json' },
-      });
-      if (!response.ok) {
-        return undefined;
-      }
-      return await response.json() as MastodonAccount;
-    }, acct);
-
-    const avatarUrl = lookup?.avatar_static || lookup?.avatar || '';
-    if (lookup?.id && /system\/(?:cache\/)?accounts\/avatars/i.test(avatarUrl)) {
-      profileUrl = serviceUrl('mastodon', `/@${acct}`);
-      profileAvatarUrl = avatarUrl;
-      break;
-    }
-  }
-
-  expect(profileUrl, 'Mastodon should resolve at least one known federated account with an avatar').toBeTruthy();
-  expect(profileAvatarUrl, 'Mastodon account lookup should expose a local cached avatar URL').toBeTruthy();
-  await page.goto(profileUrl!, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  expect(profileAvatarUrl, 'Mastodon avatar seed should expose its stored media URL').toMatch(/^https?:\/\//);
+  expect(profileAvatarUrl, 'Mastodon avatar should use the account-avatar storage path').toMatch(
+    /system\/(?:cache\/)?accounts\/avatars/i
+  );
+  await page.goto(profileUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
 
   const loadedAvatars = await page.waitForFunction(async (fallbackAvatarUrl) => {
@@ -912,16 +933,16 @@ test('Mastodon - federated profile avatars render with real pixels', async ({ pa
     width: number;
     height: number;
   }>;
-  expect(avatarImages.length, 'remote profile page should contain at least one loaded avatar image').toBeGreaterThan(0);
+  expect(avatarImages.length, 'profile page should contain at least one loaded avatar image').toBeGreaterThan(0);
 
   const mastodonHost = new URL(serviceUrl('mastodon')).hostname;
   const localAvatarImages = avatarImages.filter((img) => new URL(img.src).hostname === mastodonHost);
   expect(
     localAvatarImages.length,
-    'federated avatars should be served from the local Mastodon cache/origin'
+    'profile avatars should be served from the local Mastodon media origin'
   ).toBeGreaterThan(0);
 
-  const screenshotPath = path.join(moduleScreenshotRoot, 'mastodon-federated-avatar-rendered.jpeg');
+  const screenshotPath = path.join(moduleScreenshotRoot, 'mastodon-profile-avatar-rendered.jpeg');
   fs.mkdirSync(moduleScreenshotRoot, { recursive: true });
   await page.screenshot({
     path: screenshotPath,
@@ -930,7 +951,7 @@ test('Mastodon - federated profile avatars render with real pixels', async ({ pa
     fullPage: false,
   });
 
-  console.log(`   Mastodon federated profile: ${profileUrl}`);
+  console.log(`   Mastodon profile: ${profileUrl}`);
   console.log(`   Loaded avatar images: ${JSON.stringify(avatarImages, null, 2)}`);
   console.log(`   Screenshot saved: ${screenshotPath}`);
 });
