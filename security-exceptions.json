@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "exceptions": [
+    {
+      "rule": "container-root-default",
+      "path": "stack.runtime.yaml",
+      "reason": "A one-shot initializer must set ownership on the Mastodon public-system volume before application startup.",
+      "mitigations": [
+        "The root process is short-lived and exits after setting directory ownership.",
+        "The long-running Mastodon services use their upstream non-root identity."
+      ]
+    }
+  ]
+}
