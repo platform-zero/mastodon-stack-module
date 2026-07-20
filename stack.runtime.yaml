@@ -3,6 +3,20 @@ schemaVersion: 1
 module: "mastodon"
 target: "apps"
 services:
+  mastodon-storage-init:
+    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    containerName: "mastodon-storage-init"
+    lifecycle: "oneshot"
+    updatePolicy: "pinned"
+    placement: "rootful"
+    user: "0:0"
+    volumes:
+    - "mastodon_public_system:/opt/mastodon/public/system"
+    command:
+    - "bash"
+    - "-c"
+    - "set -euo pipefail\nchown -R 991:991 /opt/mastodon/public/system\n"
+    restart: "no"
   mastodon-init:
     image: "ghcr.io/mastodon/mastodon:v4.5.4"
     containerName: "mastodon-init"
@@ -10,6 +24,7 @@ services:
     updatePolicy: "pinned"
     placement: "rootful"
     dependencies:
+      mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
     environment:
@@ -67,6 +82,7 @@ services:
     dependencies:
       caddy: "healthy"
       mastodon-init: "completed"
+      mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
     environment:
@@ -164,6 +180,7 @@ services:
     updatePolicy: "registry"
     placement: "rootful"
     dependencies:
+      mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
     environment:
@@ -202,6 +219,7 @@ services:
     dependencies:
       caddy: "healthy"
       mastodon-init: "completed"
+      mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
     environment:
@@ -288,6 +306,7 @@ services:
     placement: "rootful"
     dependencies:
       caddy: "healthy"
+      mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
     environment:
