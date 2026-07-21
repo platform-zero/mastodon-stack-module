@@ -376,7 +376,8 @@ test.describe('Mastodon mobile unauthenticated SSO', () => {
           .or(page.getByRole('button', { name: /keycloak|sso|openid/i }))
           .or(page.getByRole('link', { name: /keycloak|sso|openid/i }))
           .first();
-        if (await repeatButton.isVisible().catch(() => false)) {
+        const remainsOnSignIn = /\/auth\/sign_in(?:[?#]|$)/.test(new URL(page.url()).pathname);
+        if (remainsOnSignIn && await repeatButton.isVisible().catch(() => false)) {
           const beforeClick = page.url();
           await repeatButton.tap({ timeout: 10000 });
           await page.waitForTimeout(2500);
