@@ -22,7 +22,7 @@ test("Mastodon: Web interface is accessible") {
 
     test("Mastodon: Streaming API is reachable") {
         val response = client.getRawResponse("${endpoints.mastodonStreaming}/api/v1/streaming/health")
-        require(response.status == HttpStatusCode.OK || response.status.isRedirect()) {
+        require(response.status == HttpStatusCode.OK || response.status.value in 300..399) {
             "Mastodon streaming API was not reachable: ${response.status}"
         }
         println("      ✓ Mastodon streaming endpoint responded with ${response.status}")
