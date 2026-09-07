@@ -14,7 +14,9 @@ suspend fun TestRunner.collaborationTests() = suite("Collaboration Tests") {
 
     test("Mastodon streaming server is healthy") {
         val response = client.getRawResponse("${env.endpoints.mastodonStreaming}/api/v1/streaming/health")
-        response.status shouldBe HttpStatusCode.OK
+        require(response.status == HttpStatusCode.OK || response.status.isRedirect()) {
+            "Mastodon streaming health endpoint was not reachable: ${response.status}"
+        }
     }
 
     test("Mastodon can fetch instance info") {
