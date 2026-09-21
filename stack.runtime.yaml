@@ -142,6 +142,7 @@ services:
       SSL_CERT_FILE: "/ca/caddy-ca.crt"
     extraHosts:
     - "mail.${DOMAIN}:host-gateway"
+    - "keycloak.${DOMAIN}:host-gateway"
     networks:
     - "caddy"
     - "postgres"
@@ -271,6 +272,7 @@ services:
       SSL_CERT_FILE: "/ca/caddy-ca.crt"
     extraHosts:
     - "mail.${DOMAIN}:host-gateway"
+    - "keycloak.${DOMAIN}:host-gateway"
     networks:
     - "postgres"
     - "valkey"
@@ -328,6 +330,8 @@ services:
       ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "${MASTODON_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}"
       ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "${MASTODON_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY}"
       SSL_CERT_FILE: "/ca/caddy-ca.crt"
+    extraHosts:
+    - "keycloak.${DOMAIN}:host-gateway"
     networks:
     - "postgres"
     - "valkey"
