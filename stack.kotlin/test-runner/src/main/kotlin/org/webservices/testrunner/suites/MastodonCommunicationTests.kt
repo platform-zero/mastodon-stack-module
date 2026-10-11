@@ -59,13 +59,22 @@ suspend fun TestRunner.mastodonCommunicationTests() = suite("Mastodon Communicat
             println("      ✓ No follow packs selected; actual editorial defaults remain empty")
             return@test
         }
-        val discoverableAccounts = mastodonScalar(
-            "select count(*) from accounts where domain is not null and discoverable = true and suspended_at is null and silenced_at is null"
-        )
-        require(discoverableAccounts > 0) {
-            "Mastodon has no discoverable remote accounts available for bootstrap recommendations"
+        val selectedHandles = selectedBootstrapHandles()
+        DriverManager.getConnection(mastodonJdbcUrl(), mastodonDbUser(), mastodonDbPassword()).use { conn ->
+            conn.prepareStatement("select count(*) from accounts where username = ? and domain is not distinct from ? and discoverable = true and suspended_at is null and silenced_at is null").use { query ->
+                selectedHandles.forEach { handle ->
+                    val parts = handle.removePrefix("@").lowercase().split('@', limit = 2)
+                    query.setString(1, parts[0])
+                    query.setString(2, parts.getOrNull(1))
+                    query.executeQuery().use { rows ->
+                        require(rows.next() && rows.getLong(1) == 1L) {
+                            "Mastodon selected bootstrap account is absent or not recommendable: $handle"
+                        }
+                    }
+                }
+            }
         }
-        println("      ✓ Mastodon has $discoverableAccounts discoverable remote accounts available for bootstrap recommendations")
+        println("      ✓ All ${selectedHandles.size} selected local or remote bootstrap accounts are recommendable")
     }
 
     test("Mastodon follow seeding creates bootstrap follows for local users") {
