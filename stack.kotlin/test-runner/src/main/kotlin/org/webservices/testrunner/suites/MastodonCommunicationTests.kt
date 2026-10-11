@@ -36,7 +36,29 @@ suspend fun TestRunner.mastodonCommunicationTests() = suite("Mastodon Communicat
         println("      ✓ Mastodon recommendation bootstrap configuration is present")
     }
 
+    fun selectedBootstrapHandles(): List<String> {
+        val runtimeRoot = System.getenv("TEST_RUNNER_RUNTIME_ROOT")?.takeIf { it.isNotBlank() } ?: "/runtime"
+        val fragments = Path.of(runtimeRoot, "stack.config", "mastodon", "bootstrap-follows.d")
+        if (!java.nio.file.Files.isDirectory(fragments)) return emptyList()
+        return java.nio.file.Files.list(fragments).use { paths ->
+            paths.filter { java.nio.file.Files.isRegularFile(it) && it.toString().endsWith(".txt") }
+                .sorted().toList().flatMap { java.nio.file.Files.readAllLines(it) }
+                .map { it.substringBefore('#').trim() }.filter { it.isNotEmpty() }.distinct()
+        }
+    }
+
+    fun requireNoEditorialDefaults() {
+        require(mastodonScalar("""select count(*) from settings where var = 'bootstrap_timeline_accounts' and coalesce(value::text, '') !~ '^[[:space:]"''-]*$'""") == 0L) {
+            "Mastodon has editorial defaults despite no selected follow packs"
+        }
+    }
+
     test("Mastodon native bootstrap recommendations resolve selected packs") {
+        if (selectedBootstrapHandles().isEmpty()) {
+            requireNoEditorialDefaults()
+            println("      ✓ No follow packs selected; actual editorial defaults remain empty")
+            return@test
+        }
         val discoverableAccounts = mastodonScalar(
             "select count(*) from accounts where domain is not null and discoverable = true and suspended_at is null and silenced_at is null"
         )
@@ -47,6 +69,14 @@ suspend fun TestRunner.mastodonCommunicationTests() = suite("Mastodon Communicat
     }
 
     test("Mastodon follow seeding creates bootstrap follows for local users") {
+        if (selectedBootstrapHandles().isEmpty()) {
+            requireNoEditorialDefaults()
+            require(mastodonScalar("select count(*) from accounts where domain is null") > 0L) {
+                "Mastodon has no native local accounts"
+            }
+            println("      ✓ Native local accounts exist without imposing unselected editorial follows")
+            return@test
+        }
         val sysadminFollows = mastodonScalar(
             """
             select count(*)
