@@ -342,6 +342,7 @@ services:
     - "mastodon_public_system:/opt/mastodon/public/system"
     - "./configs/mastodon/configure-bootstrap-recommendations.sh:/opt/mastodon/bin/configure-bootstrap-recommendations.sh:ro"
     - "./configs/mastodon/bootstrap-follows.d:/opt/mastodon/config/bootstrap-follows.d:ro"
+    - "./configs/mastodon/check-bootstrap-recommendations.sh:/opt/mastodon/bin/check-bootstrap-recommendations.sh:ro"
     command:
     - "bash"
     - "-c"
@@ -353,7 +354,16 @@ services:
       \n  sleep 5\ndone\nif [ \"$${keycloak_ready}\" != \"true\" ]; then\n  echo \"\
       Keycloak OIDC discovery was not ready for Mastodon recommendation seeder\" >&2\n\
       \  exit 1\nfi\nwhile true; do\n  bash /opt/mastodon/bin/configure-bootstrap-recommendations.sh\
-      \ || true\n  sleep ${MASTODON_RECOMMENDATION_SEED_INTERVAL_SECONDS:-60}\ndone\n"
+      \n  sleep ${MASTODON_RECOMMENDATION_SEED_INTERVAL_SECONDS:-60}\ndone\n"
+    health:
+      test:
+      - "CMD"
+      - "bash"
+      - "/opt/mastodon/bin/check-bootstrap-recommendations.sh"
+      interval: "30s"
+      timeout: "20s"
+      retries: 10
+      start_period: "300s"
     restart: "unless-stopped"
 networks: {}
 volumes:

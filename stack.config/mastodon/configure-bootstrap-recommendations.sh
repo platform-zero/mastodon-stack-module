@@ -2,14 +2,16 @@
 set -euo pipefail
 
 echo "Waiting for Redis availability before configuring Mastodon recommendations..."
+redis_host="${REDIS_HOST:-valkey}"
+redis_port="${REDIS_PORT:-6379}"
 for i in $(seq 1 30); do
-  if (echo > /dev/tcp/valkey/6379) >/dev/null 2>&1; then
+  if (echo > /dev/tcp/"$redis_host"/"$redis_port") >/dev/null 2>&1; then
     echo "Redis is reachable"
     break
   fi
   if [ "$i" -eq 30 ]; then
-    echo "Redis is not reachable after retries; skipping recommendation configuration."
-    exit 0
+    echo "Redis is not reachable after retries; recommendation configuration failed."
+    exit 1
   fi
   sleep 2
 done
@@ -69,7 +71,7 @@ MASTODON_BOOTSTRAP_RECOMMENDATIONS="$recommended_accounts_csv" bundle exec rails
         sleep 3
         retry
       end
-      puts "warn recommendation: #{handle} failed: #{e.class} #{e.message}"
+      puts "warn recommendation: #{handle} failed: #{e.class}"
     end
   end
 
@@ -118,7 +120,7 @@ MASTODON_BOOTSTRAP_RECOMMENDATIONS="$recommended_accounts_csv" bundle exec rails
         puts "ok follow seed: #{source_account.acct} -> #{target_account.acct}"
       rescue => e
         follow_seed_skipped << "#{source_account.acct}->#{target_account.acct}:#{e.class}"
-        puts "warn follow seed: #{source_account.acct} -> #{target_account.acct} failed: #{e.class} #{e.message}"
+        puts "warn follow seed: #{source_account.acct} -> #{target_account.acct} failed: #{e.class}"
       end
     end
   end
@@ -156,7 +158,7 @@ MASTODON_BOOTSTRAP_RECOMMENDATIONS="$recommended_accounts_csv" bundle exec rails
         record.save!(validate: false)
         cleaned << "#{model.name}(#{record.id}).#{attachment}"
       rescue => e
-        puts "warn recommendation: failed cleaning #{model.name}(#{record.id}).#{attachment}: #{e.class} #{e.message}"
+        puts "warn recommendation: failed cleaning #{model.name}(#{record.id}).#{attachment}: #{e.class}"
       end
     end
   end
@@ -164,7 +166,7 @@ MASTODON_BOOTSTRAP_RECOMMENDATIONS="$recommended_accounts_csv" bundle exec rails
   begin
     Rails.cache.delete_matched("follow_recommendations/*")
   rescue => e
-    puts "warn recommendation: cache invalidation skipped: #{e.class} #{e.message}"
+    puts "warn recommendation: cache invalidation skipped: #{e.class}"
   end
 
   puts "configured bootstrap_timeline_accounts=#{Setting.bootstrap_timeline_accounts}"
