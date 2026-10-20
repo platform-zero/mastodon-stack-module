@@ -181,6 +181,7 @@ services:
     updatePolicy: "registry"
     placement: "rootful"
     dependencies:
+      mastodon-init: "completed"
       mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
@@ -308,6 +309,7 @@ services:
     placement: "rootful"
     dependencies:
       caddy: "healthy"
+      mastodon-init: "completed"
       mastodon-storage-init: "completed"
       postgres-ssd-bootstrap: "completed"
       valkey: "healthy"
