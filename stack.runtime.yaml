@@ -4,7 +4,7 @@ module: "mastodon"
 target: "apps"
 services:
   mastodon-storage-init:
-    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon:v4.5.4@sha256:16def7e8dec489a487694e00a6e360beee73ae883c312a683df81c490564495f"
     containerName: "mastodon-storage-init"
     lifecycle: "oneshot"
     updatePolicy: "pinned"
@@ -18,7 +18,7 @@ services:
     - "set -euo pipefail\nchown -R 991:991 /opt/mastodon/public/system\n"
     restart: "no"
   mastodon-init:
-    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon:v4.5.4@sha256:16def7e8dec489a487694e00a6e360beee73ae883c312a683df81c490564495f"
     containerName: "mastodon-init"
     lifecycle: "oneshot"
     updatePolicy: "pinned"
@@ -74,7 +74,7 @@ services:
       bash /opt/mastodon/bin/configure-bootstrap-recommendations.sh\n"
     restart: "no"
   mastodon-web:
-    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon:v4.5.4@sha256:16def7e8dec489a487694e00a6e360beee73ae883c312a683df81c490564495f"
     containerName: "mastodon-web"
     lifecycle: "daemon"
     updatePolicy: "registry"
@@ -175,7 +175,7 @@ services:
       \ web\" >&2\nexit 1\n"
     restart: "unless-stopped"
   mastodon-streaming:
-    image: "ghcr.io/mastodon/mastodon-streaming:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon-streaming:v4.5.4@sha256:efb648430e28fc2be14ed1292351e3ca34461d6eef68cfb347b4788b8be31737"
     containerName: "mastodon-streaming"
     lifecycle: "daemon"
     updatePolicy: "registry"
@@ -213,7 +213,7 @@ services:
       start_period: "60s"
     restart: "unless-stopped"
   mastodon-sidekiq:
-    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon:v4.5.4@sha256:16def7e8dec489a487694e00a6e360beee73ae883c312a683df81c490564495f"
     containerName: "mastodon-sidekiq"
     lifecycle: "daemon"
     updatePolicy: "registry"
@@ -302,7 +302,7 @@ services:
       exit 1\n"
     restart: "unless-stopped"
   mastodon-recommendation-seeder:
-    image: "ghcr.io/mastodon/mastodon:v4.5.4"
+    image: "ghcr.io/mastodon/mastodon:v4.5.4@sha256:16def7e8dec489a487694e00a6e360beee73ae883c312a683df81c490564495f"
     containerName: "mastodon-recommendation-seeder"
     lifecycle: "daemon"
     updatePolicy: "registry"
